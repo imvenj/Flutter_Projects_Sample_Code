@@ -10,8 +10,8 @@ class CountDownTimer {
   Duration _fullTime;
 
   int work = 30;
-
-  
+  int shortBreak = 5;
+  int longBreak = 20;
 
   String returnTime(Duration t) {
     String minutes = (t.inMinutes < 10) ? '0' + t.inMinutes.toString() : t.inMinutes.toString();
@@ -24,7 +24,7 @@ class CountDownTimer {
   Stream<TimerModel> stream() async* {
     yield* Stream.periodic(Duration(seconds: 1), (_) {
       String time;
-      if (this._isActive) {
+      if (_isActive) {
         _time = _time - Duration(seconds: 1);
         _radius = _time.inSeconds / _fullTime.inSeconds;
         if (_time.inSeconds <= 0) {
@@ -38,8 +38,24 @@ class CountDownTimer {
 
   void startWork() {
     _radius = 1;
-    _time = Duration(minutes: this.work, seconds: 0);
+    _time = Duration(minutes: work, seconds: 0);
     _fullTime = _time;
+  }
+
+  void startBreak(bool isShort) {
+    _radius = 1;
+    _time = Duration(minutes: (isShort ? shortBreak : longBreak), seconds: 0);
+    _fullTime = _time;
+  }
+
+  void stopTimer() {
+    _isActive = false;
+  }
+
+  void startTimer() {
+    if (_time.inSeconds > 0) {
+      _isActive = true;
+    }
   }
 
 }

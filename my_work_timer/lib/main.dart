@@ -46,7 +46,7 @@ class TimerHomePage extends StatelessWidget {
                     child: ProductivityButton(
                       color: Color(0xff009688),
                       text: 'Work',
-                      onPressed: emptyMethod,
+                      onPressed: () => timer.startWork(),
                       size: 150
                     ),
                   ),
@@ -57,7 +57,7 @@ class TimerHomePage extends StatelessWidget {
                     child: ProductivityButton(
                       color: Color(0xff607d8b),
                       text: 'Short Break',
-                      onPressed: emptyMethod,
+                      onPressed: () => timer.startBreak(true),
                       size: 150
                     ),
                   ),
@@ -68,7 +68,7 @@ class TimerHomePage extends StatelessWidget {
                     child: ProductivityButton(
                       color: Color(0xff455a64),
                       text: 'Long Break',
-                      onPressed: emptyMethod,
+                      onPressed: () => timer.startBreak(false),
                       size: 150
                     ),
                   ),
@@ -105,7 +105,7 @@ class TimerHomePage extends StatelessWidget {
                     child: ProductivityButton(
                       color: Color(0xff212121),
                       text: 'Stop',
-                      onPressed: emptyMethod,
+                      onPressed: timer.stopTimer,
                       size: 150
                     ),
                   ),
@@ -116,7 +116,7 @@ class TimerHomePage extends StatelessWidget {
                     child: ProductivityButton(
                       color: Color(0xff009688),
                       text: 'Restart',
-                      onPressed: emptyMethod,
+                      onPressed: timer.startTimer,
                       size: 150
                     ),
                   ),
@@ -129,8 +129,6 @@ class TimerHomePage extends StatelessWidget {
           );
         },
       )
-
-
     );
   }
 }
