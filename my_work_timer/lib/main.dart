@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_work_timer/settings.dart';
 import 'package:my_work_timer/timer.dart';
 import 'package:my_work_timer/timermodel.dart';
 import 'package:my_work_timer/widgets.dart';
@@ -22,15 +23,42 @@ class MyApp extends StatelessWidget {
 }
 
 class TimerHomePage extends StatelessWidget {
-  final double defaultPadding = 5.0;
-  final CountDownTimer timer = CountDownTimer();
+  final defaultPadding = 5.0;
+  final timer = CountDownTimer();
+
+  void goToSettings(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SettingsScreen()
+      )
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+
     timer.startWork();
+
+    final menuItems = List<PopupMenuItem<String>>();
+    menuItems.add(PopupMenuItem(
+      value: 'Settings',
+      child: Text('Settings')
+    ));
+
     return Scaffold(
       appBar: AppBar(
         title: Text('My Work Timer'),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            itemBuilder: (_) => menuItems.toList(),
+            onSelected: (s) {
+              if (s == 'Settings') {
+                goToSettings(context);
+              }
+            },
+          )
+        ],
       ),
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
