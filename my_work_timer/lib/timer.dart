@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:my_work_timer/timermodel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CountDownTimer {
   double _radius = 1;
@@ -12,6 +13,13 @@ class CountDownTimer {
   int work = 30;
   int shortBreak = 5;
   int longBreak = 20;
+
+  Future readSetings() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    work = prefs.getInt('workTime') == null ? 30 : prefs.getInt('workTime');
+    shortBreak = prefs.getInt('shortBreak') == null ? 5 : prefs.getInt('shortBreak');
+    longBreak = prefs.getInt('longBreak') == null ? 20 : prefs.getInt('longBreak');
+  }
 
   String returnTime(Duration t) {
     String minutes = (t.inMinutes < 10) ? '0' + t.inMinutes.toString() : t.inMinutes.toString();
@@ -36,7 +44,8 @@ class CountDownTimer {
     });
   }
 
-  void startWork() {
+  void startWork() async {
+    await readSetings();
     _radius = 1;
     _time = Duration(minutes: work, seconds: 0);
     _fullTime = _time;

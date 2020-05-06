@@ -43,6 +43,15 @@ class _SettingsState extends State<Settings> {
     workTime = prefs.getInt(WORKTIME);
     shortBreak = prefs.getInt(SHORTBREAK);
     longBreak = prefs.getInt(LONGBREAK);
+    if (workTime == null) {
+      await prefs.setInt(WORKTIME, 30);
+    }
+    if (shortBreak == null) {
+      await prefs.setInt(SHORTBREAK, 5);
+    }
+    if (longBreak == null) {
+      await prefs.setInt(LONGBREAK, 20);
+    }
     setState(() {
       txtWork.text = workTime.toString();
       txtShort.text = shortBreak.toString();
