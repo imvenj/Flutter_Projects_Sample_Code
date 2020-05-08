@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:simple_pong/bat.dart';
 import 'package:simple_pong/ball.dart';
+import 'dart:math';
 
 enum Direction { up, down, left, right }
 
@@ -17,6 +18,9 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
   double batWidth = 0;
   double batHeight = 0;
   double batPosition = 0;
+  double randX = 1;
+  double randY = 1;
+  int score = 0;
 
   Direction vDir = Direction.down;
   Direction hDir = Direction.right;
@@ -37,22 +41,66 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
     double diameter = 50;
     if (posX <= 0 && hDir == Direction.left) {
       hDir = Direction.right;
+      randX = randomNumber();
     }
     if (posX >= width - diameter && hDir == Direction.right) {
       hDir = Direction.left;
+      randX = randomNumber();
     }
     if (posY >= height - diameter - batHeight && vDir == Direction.down) {
       if (posX >= batPosition - diameter && posX <= (batPosition + batWidth + diameter)) {
         vDir = Direction.up;
+        randY = randomNumber();
+        safeSetState(() => score++);
       }
       else {
         controller.stop();
-        dispose();
+        showMessage(context);
       }
     }
     if (posY <= 0 && vDir == Direction.up) {
       vDir = Direction.down;
+      randY = randomNumber();
     }
+  }
+
+  double randomNumber() {
+    var ran = Random();
+    int myNum = ran.nextInt(101);
+    return (50 + myNum) / 100;
+  }
+
+  void showMessage(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Game Over'),
+          content: Text('Would you like to play again?'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Yes'),
+              onPressed: () {
+                setState(() {
+                  posX = 0;
+                  posY = 0;
+                  score = 0;
+                });
+                Navigator.of(context).pop();
+                controller.repeat();
+              },
+            ),
+            FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                dispose();
+              },
+            )
+          ],
+        );
+      }
+    );
   }
 
   @override
@@ -69,8 +117,8 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
     ).animate(controller);
     animation.addListener(() {
       safeSetState(() {
-        (hDir == Direction.right) ? posX += increment : posX -= increment;
-        (vDir == Direction.down) ? posY += increment : posY -= increment;
+        (hDir == Direction.right) ? posX += (increment * randX).round() : posX -= (increment * randX).round();
+        (vDir == Direction.down) ? posY += (increment * randY).round() : posY -= (increment * randY).round();
       });
       checkBorders();
     });
@@ -94,6 +142,11 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
       batHeight = height / 20;
       return Stack(
         children: <Widget>[
+          Positioned(
+            top: 0,
+            right: 24,
+            child: Text('Score: ' + score.toString())
+          ),
           Positioned(
             child: Ball(),
             top: posY,
